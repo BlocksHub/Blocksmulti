@@ -1,0 +1,11 @@
+[licenses]
+allow = [
+    "MIT",
+    "CeCILL-2.1",
+    "Unicode-3.0",
+    "CDLA-Permissive-2.0",
+    "ISC",
+    "MPL-2.0",
+    "BSD-3-Clause",
+    "Apache-2.0"
+]

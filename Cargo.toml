@@ -1,0 +1,49 @@
+[package]
+name = "blockmulti"
+description = "A perfect wrapper for Esup Multi API"
+authors = ["BlockHub"]
+readme = "README.md"
+license = "CeCILL-2.1"
+keywords = ["esup-multi", "esup", "wrapper", "school"]
+categories = ["api-bindings", "web-programming::http-client", "asynchronous"]
+version = "0.1.0"
+edition = "2024"
+repository = "https://github.com/BlocksHub/Blockmulti"
+
+[lib]
+crate-type = ["lib", "cdylib", "staticlib"]
+name = "blockmulti"
+
+[[bin]]
+name = "uniffi-bindgen"
+path = "uniffi-bindgen.rs"
+required-features = ["cli"]
+
+[features]
+cli = ["uniffi/cli"]
+
+[dependencies]
+uniffi = { version = "0.32.0", features = [ "tokio" ] }
+tokio = { version = "1.53.1", features = ["macros", "rt-multi-thread"] }
+reqwest = { version = "0.13.4", features = ["json"] }
+serde = { version = "1.0.229", features = ["derive"] }
+serde_json = "1.0.151"
+url = "2.5.8"
+chrono = { version = "0.4.45", features = ["serde"] }
+
+[lints.clippy]
+cargo = { level = "warn", priority = -1 }
+multiple_crate_versions = "allow"
+
+error_impl_error           = "warn"
+dbg_macro                  = "warn"
+print_stderr               = "warn"
+print_stdout               = "warn"
+str_to_string              = "warn"
+mem_forget                 = "warn"
+unwrap_used                = "warn"
+expect_used                = "warn"
+panic                      = "warn"
+todo                       = "warn"
+unimplemented              = "warn"
+undocumented_unsafe_blocks = "warn"

@@ -1,0 +1,6 @@
+[bindings.kotlin]
+package_name = "fr.blockshub.blockmulti"
+android = true
+
+[bindings.swift]
+module_name = "Blockmulti"
