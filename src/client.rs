@@ -1,6 +1,7 @@
 use std::collections::HashMap;
 use std::sync::Arc;
 
+use serde::de::DeserializeOwned;
 use serde_json::json;
 use url::Url;
 
@@ -17,7 +18,7 @@ use crate::{
         features::{ContentQueryResponse, Feature, Widget},
         important_news::ImportantNews,
         mail_calendar::MailCalendarReply,
-        map::{MapData, MapPointItem},
+        map::MapData,
         notifications::{Channel, NotificationResult},
         restaurants::{Restaurant, RestaurantMenu},
         rss::FeedItem,
@@ -30,8 +31,8 @@ use crate::{
 #[derive(uniffi::Object)]
 pub struct Client {
     pub(crate) http: HttpManager,
-    pub auth_token: String,
-    pub server_url: String,
+    pub(crate) auth_token: String,
+    pub(crate) server_url: String,
 }
 
 #[uniffi::export(async_runtime = "tokio")]
@@ -114,7 +115,7 @@ impl Client {
     }
 
     pub async fn get_features(&self) -> Result<ContentQueryResponse, HttpError> {
-        let payload = json!({ "authToken": self.auth_token });
+        let payload = self.auth_payload();
         let val: serde_json::Value = self.http.post(Endpoint::Features, Some(payload)).await?;
 
         if let Ok(resp) = serde_json::from_value::<ContentQueryResponse>(val.clone()) {
@@ -131,13 +132,11 @@ impl Client {
                         .map_or(false, |s| s.starts_with("widget:"));
 
                 if is_widget {
-                    if let Ok(w) = serde_json::from_value::<Widget>(item.clone()) {
+                    if let Ok(w) = serde_json::from_value::<Widget>(item) {
                         widgets.push(w);
                     }
-                } else {
-                    if let Ok(f) = serde_json::from_value::<Feature>(item.clone()) {
-                        features.push(f);
-                    }
+                } else if let Ok(f) = serde_json::from_value::<Feature>(item) {
+                    features.push(f);
                 }
             }
 
@@ -151,18 +150,15 @@ impl Client {
     }
 
     pub async fn get_card(&self) -> Result<UserCard, HttpError> {
-        let payload = json!({ "authToken": self.auth_token });
-        self.http.post(Endpoint::Card, Some(payload)).await
+        self.http.post(Endpoint::Card, Some(self.auth_payload())).await
     }
 
     pub async fn get_card_eu(&self) -> Result<UserCardEu, HttpError> {
-        let payload = json!({ "authToken": self.auth_token });
-        self.http.post(Endpoint::CardEu, Some(payload)).await
+        self.http.post(Endpoint::CardEu, Some(self.auth_payload())).await
     }
 
     pub async fn get_card_eu_light(&self) -> Result<UserCardEuLight, HttpError> {
-        let payload = json!({ "authToken": self.auth_token });
-        self.http.post(Endpoint::CardEuLight, Some(payload)).await
+        self.http.post(Endpoint::CardEuLight, Some(self.auth_payload())).await
     }
 
     pub async fn get_schedule(
@@ -170,11 +166,9 @@ impl Client {
         start_date: String,
         end_date: String,
     ) -> Result<Schedule, HttpError> {
-        let payload = json!({
-            "authToken": self.auth_token,
-            "startDate": start_date,
-            "endDate": end_date
-        });
+        let mut payload = self.auth_payload();
+        payload["startDate"] = json!(start_date);
+        payload["endDate"] = json!(end_date);
         self.http.post(Endpoint::Schedule, Some(payload)).await
     }
 
@@ -183,11 +177,9 @@ impl Client {
         offset: u32,
         length: u32,
     ) -> Result<Vec<NotificationResult>, HttpError> {
-        let payload = json!({
-            "authToken": self.auth_token,
-            "offset": offset,
-            "length": length
-        });
+        let mut payload = self.auth_payload();
+        payload["offset"] = json!(offset);
+        payload["length"] = json!(length);
         self.http.post(Endpoint::Notifications, Some(payload)).await
     }
 
@@ -195,10 +187,8 @@ impl Client {
         &self,
         notification_ids: Vec<String>,
     ) -> Result<(), HttpError> {
-        let payload = json!({
-            "authToken": self.auth_token,
-            "notificationIds": notification_ids
-        });
+        let mut payload = self.auth_payload();
+        payload["notificationIds"] = json!(notification_ids);
         let _: serde_json::Value = self
             .http
             .post(Endpoint::NotificationsRead, Some(payload))
@@ -215,11 +205,9 @@ impl Client {
         token: String,
         platform: String,
     ) -> Result<(), HttpError> {
-        let payload = json!({
-            "authToken": self.auth_token,
-            "token": token,
-            "platform": platform
-        });
+        let mut payload = self.auth_payload();
+        payload["token"] = json!(token);
+        payload["platform"] = json!(platform);
         let _: serde_json::Value = self
             .http
             .post(Endpoint::NotificationsRegister, Some(payload))
@@ -228,10 +216,8 @@ impl Client {
     }
 
     pub async fn unregister_fcm_token(&self, fcm_token: String) -> Result<(), HttpError> {
-        let payload = json!({
-            "authToken": self.auth_token,
-            "fcmToken": fcm_token
-        });
+        let mut payload = self.auth_payload();
+        payload["fcmToken"] = json!(fcm_token);
         let _: serde_json::Value = self
             .http
             .post(Endpoint::NotificationsUnregister, Some(payload))
@@ -240,13 +226,11 @@ impl Client {
     }
 
     pub async fn get_clocking(&self) -> Result<ClockingReply, HttpError> {
-        let payload = json!({ "authToken": self.auth_token });
-        self.http.post(Endpoint::Clocking, Some(payload)).await
+        self.http.post(Endpoint::Clocking, Some(self.auth_payload())).await
     }
 
     pub async fn clock_in(&self) -> Result<ClockingReply, HttpError> {
-        let payload = json!({ "authToken": self.auth_token });
-        self.http.post(Endpoint::ClockIn, Some(payload)).await
+        self.http.post(Endpoint::ClockIn, Some(self.auth_payload())).await
     }
 
     pub async fn get_restaurants(&self) -> Result<Vec<Restaurant>, HttpError> {
@@ -263,13 +247,7 @@ impl Client {
             .get_query(Endpoint::RestaurantMenus, &[("id", &id), ("date", &date)])
             .await?;
 
-        if let Ok(list) = serde_json::from_value::<Vec<RestaurantMenu>>(val.clone()) {
-            Ok(list)
-        } else if let Ok(single) = serde_json::from_value::<RestaurantMenu>(val) {
-            Ok(vec![single])
-        } else {
-            Ok(vec![])
-        }
+        Ok(Self::parse_one_or_many(val))
     }
 
     pub async fn get_rss(&self) -> Result<Vec<FeedItem>, HttpError> {
@@ -285,36 +263,26 @@ impl Client {
     }
 
     pub async fn get_mail_calendar(&self) -> Result<MailCalendarReply, HttpError> {
-        let payload = json!({ "authToken": self.auth_token });
-        self.http.post(Endpoint::MailCalendar, Some(payload)).await
+        self.http.post(Endpoint::MailCalendar, Some(self.auth_payload())).await
     }
 
     pub async fn get_map(&self) -> Result<MapData, HttpError> {
         let val: serde_json::Value = self.http.get(Endpoint::Map).await?;
         if let Ok(map_data) = serde_json::from_value::<MapData>(val.clone()) {
             Ok(map_data)
-        } else if let Ok(items) = serde_json::from_value::<Vec<MapPointItem>>(val) {
-            Ok(MapData {
-                icons: vec![],
-                categories: vec![],
-                campuses: vec![],
-                markers_collections: HashMap::new(),
-                items,
-            })
         } else {
             Ok(MapData {
                 icons: vec![],
                 categories: vec![],
                 campuses: vec![],
                 markers_collections: HashMap::new(),
-                items: vec![],
+                items: Self::parse_one_or_many(val),
             })
         }
     }
 
     pub async fn get_important_news(&self) -> Result<Vec<ImportantNews>, HttpError> {
-        let payload = json!({ "authToken": self.auth_token });
-        self.http.post(Endpoint::ImportantNews, Some(payload)).await
+        self.http.post(Endpoint::ImportantNews, Some(self.auth_payload())).await
     }
 
     pub async fn contact_us(
@@ -324,7 +292,7 @@ impl Client {
         text: String,
     ) -> Result<(), HttpError> {
         let payload = json!({
-            "userData": { "authToken": self.auth_token },
+            "userData": self.auth_payload(),
             "from": from_email,
             "subject": subject,
             "text": text
@@ -342,11 +310,9 @@ impl Client {
         search_type: String,
         value: String,
     ) -> Result<Vec<Contact>, HttpError> {
-        let payload = json!({
-            "authToken": self.auth_token,
-            "type": search_type,
-            "value": value
-        });
+        let mut payload = self.auth_payload();
+        payload["type"] = json!(search_type);
+        payload["value"] = json!(value);
         self.http.post(Endpoint::Contacts, Some(payload)).await
     }
 
@@ -356,19 +322,23 @@ impl Client {
 
     pub async fn get_version(&self) -> Result<String, HttpError> {
         let res: serde_json::Value = self.http.get(Endpoint::Version).await?;
-        Ok(res["version"].as_str().unwrap_or("unknown").to_string())
+        Ok(res.get("version")
+            .and_then(|v| v.as_str())
+            .unwrap_or("unknown")
+            .to_string())
     }
 
     pub async fn get_health(&self) -> Result<String, HttpError> {
         let res: serde_json::Value = self.http.get(Endpoint::Health).await?;
-        Ok(res["message"].as_str().unwrap_or("unknown").to_string())
+        Ok(res.get("message")
+            .and_then(|v| v.as_str())
+            .unwrap_or("unknown")
+            .to_string())
     }
 
     pub async fn get_sso_service_token(&self, service: String) -> Result<String, HttpError> {
-        let payload = json!({
-            "authToken": self.auth_token,
-            "service": service
-        });
+        let mut payload = self.auth_payload();
+        payload["service"] = json!(service);
         let res_text = self
             .http
             .post_text(Endpoint::SsoServiceToken, Some(payload))
@@ -420,5 +390,21 @@ impl Client {
             .post_text(Endpoint::StatisticsUserAction, Some(payload))
             .await?;
         Ok(())
+    }
+}
+
+/// Internal helpers — NOT exported via UniFFI.
+impl Client {
+    fn auth_payload(&self) -> serde_json::Value {
+        json!({ "authToken": self.auth_token })
+    }
+
+    fn parse_one_or_many<T: DeserializeOwned>(val: serde_json::Value) -> Vec<T> {
+        serde_json::from_value::<Vec<T>>(val.clone())
+            .unwrap_or_else(|_| {
+                serde_json::from_value::<T>(val)
+                    .map(|single| vec![single])
+                    .unwrap_or_default()
+            })
     }
 }
