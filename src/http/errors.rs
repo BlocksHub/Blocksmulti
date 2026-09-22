@@ -1,38 +1,18 @@
-use std::fmt;
+use thiserror::Error;
 
-#[derive(Debug, uniffi::Error)]
+#[derive(Debug, Error, uniffi::Error)]
 #[uniffi(flat_error)]
 pub enum HttpError {
+    #[error("failed to parse URL: {0}")]
     UrlParsing(url::ParseError),
+    #[error("HTTP request failed: {0}")]
     Request(reqwest::Error),
+    #[error("failed to serialize payload: {0}")]
     Serialize(serde_json::Error),
+    #[error("this endpoint requires authentication")]
     Unauthenticated,
+    #[error("session lock is poisoned")]
     PoisonedSession,
+    #[error("esup-multi api returned {0}: {1}")]
     InvalidStatus(reqwest::StatusCode, String),
-}
-
-impl fmt::Display for HttpError {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        match self {
-            Self::UrlParsing(e) => write!(f, "failed to parse URL: {e}"),
-            Self::Request(e) => write!(f, "HTTP request failed: {e}"),
-            Self::Serialize(e) => write!(f, "failed to serialize payload: {e}"),
-            Self::Unauthenticated => write!(f, "this endpoint require to be logged in"),
-            Self::PoisonedSession => write!(f, "session lock is poisoned"),
-            Self::InvalidStatus(status, body) => {
-                write!(f, "esup-multi api returned {status}: {body}")
-            }
-        }
-    }
-}
-
-impl std::error::Error for HttpError {
-    fn source(&self) -> Option<&(dyn std::error::Error + 'static)> {
-        match self {
-            Self::UrlParsing(e) => Some(e),
-            Self::Request(e) => Some(e),
-            Self::Serialize(e) => Some(e),
-            _ => None,
-        }
-    }
 }
