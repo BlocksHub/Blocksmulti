@@ -48,6 +48,10 @@ Here is a list of supported universities with their respective API endpoints and
 | 🏛️ **Université de Lorraine** | [https://mobile-back.univ-lorraine.fr](https://mobile-back.univ-lorraine.fr) | DIRECT |
 | 🏛️ **Normandie Université** | [https://enpoche.normandie-univ.fr](https://enpoche.normandie-univ.fr) | CAS |
 
+> [!INFO]
+> This list is not exhaustive and may not be up to date. If you know of another university that uses Esup Multi, please let us know and we will add it to the list.
+> You can view the full list of supported universities on the [Esup Multi documentation](https://wiki.esup-portail.org/xwiki/bin/view/ProjetMulti/DebuterAvecMulti).
+
 ## 📜 License
 
 This project is the property of **BlockHub** and is distributed under the [CeCILL v2.1](LICENSE) license.
