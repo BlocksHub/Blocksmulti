@@ -6,7 +6,7 @@ readme = "README.md"
 license = "CeCILL-2.1"
 keywords = ["esup-multi", "esup", "wrapper", "school"]
 categories = ["api-bindings", "web-programming::http-client", "asynchronous"]
-version = "0.1.0"
+version = "0.1.1"
 edition = "2024"
 repository = "https://github.com/BlocksHub/Blockmulti"
 

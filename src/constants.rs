@@ -1,1 +1,1 @@
-pub const USER_AGENT: &str = "Blocksmulti/0.1.0";
+pub const USER_AGENT: &str = concat!("Blocksmulti/", env!("CARGO_PKG_VERSION"));
