@@ -1,5 +1,5 @@
 use std::{
-    sync::{PoisonError, RwLock, RwLockReadGuard},
+    sync::{RwLock, RwLockReadGuard},
     time::{Duration, SystemTime},
 };
 
@@ -43,12 +43,12 @@ impl HttpManager {
         }
     }
 
-    fn session(&self) -> RwLockReadGuard<'_, Session> {
-        self.session.read().unwrap_or_else(PoisonError::into_inner)
+    fn session(&self) -> Result<RwLockReadGuard<'_, Session>, HttpError> {
+        self.session.read().map_err(|_| HttpError::PoisonedSession)
     }
 
     pub(crate) fn access_token(&self) -> Result<String, HttpError> {
-        let session = self.session();
+        let session = self.session()?;
         if session.is_expired() {
             return Err(HttpError::Unauthenticated);
         };
@@ -244,10 +244,7 @@ impl HttpManager {
         };
 
         if let Some(body) = payload {
-            let serialized = serde_json::to_string(&body).map_err(HttpError::Serialize)?;
-            request = request
-                .body(serialized)
-                .header("Content-Type", "application/json");
+            request = request.json(&body);
         }
 
         Ok(request)
