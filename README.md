@@ -2,7 +2,7 @@
 
 # 🚀 Blocksmulti
 
-[![Build and Release](https://github.com/BlocksHub/Blockmulti/actions/workflows/build-and-release.yml/badge.svg)](https://github.com/BlocksHub/Blockmulti/actions/workflows/build-and-release.yml)
+[![Build and Release](https://github.com/BlocksHub/Blocksmulti/actions/workflows/build-and-release.yml/badge.svg)](https://github.com/BlocksHub/Blocksmulti/actions/workflows/build-and-release.yml)
 [![License: CeCILL v2.1](https://img.shields.io/badge/License-CeCILL_v2.1-blue.svg)](LICENSE)
 [![Rust](https://img.shields.io/badge/rust-stable-orange.svg)](https://www.rust-lang.org)
 [![Swift](https://img.shields.io/badge/Swift-FA7343?logo=swift&logoColor=white)](https://swift.org)

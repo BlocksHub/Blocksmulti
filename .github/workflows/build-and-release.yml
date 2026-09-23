@@ -5,8 +5,8 @@ on:
   workflow_dispatch:
 
 env:
-  CRATE_NAME: Blockmulti
-  LIB_NAME: blockmulti
+  CRATE_NAME: Blocksmulti
+  LIB_NAME: blocksmulti
   IPHONEOS_DEPLOYMENT_TARGET: 13.0
 
 jobs:

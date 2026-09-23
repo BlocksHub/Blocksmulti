@@ -4,17 +4,17 @@
 import PackageDescription
 
 let package = Package(
-    name: "Blockmulti",
+    name: "Blocksmulti",
     platforms: [.iOS(.v13)],
     products: [
-        .library(name: "Blockmulti", targets: ["Blockmulti"])
+        .library(name: "Blocksmulti", targets: ["Blocksmulti"])
     ],
     targets: [
         .binaryTarget(
-            name: "BlockmultiFFI",
+            name: "BlocksmultiFFI",
             url: "PLACEHOLDER_URL",
             checksum: "PLACEHOLDER_CHECKSUM"
         ),
-        .target(name: "Blockmulti", dependencies: ["BlockmultiFFI"])
+        .target(name: "Blocksmulti", dependencies: ["BlocksmultiFFI"])
     ]
 )

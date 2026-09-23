@@ -8,5 +8,5 @@ pluginManagement {
 dependencyResolutionManagement {
     repositories { google(); mavenCentral() }
 }
-rootProject.name = "blockmulti"
+rootProject.name = "blocksmulti"
 include(":lib")

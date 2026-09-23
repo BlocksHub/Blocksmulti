@@ -1,4 +1,4 @@
-use blockmulti::HttpError;
+use blocksmulti::HttpError;
 
 #[tokio::main]
 async fn main() -> Result<(), HttpError> {
@@ -10,7 +10,7 @@ async fn main() -> Result<(), HttpError> {
         .expect("ESUP_MULTI_PASSWORD non défini dans l'environnement");
 
     println!("Authentification sur le serveur {}...", server_url);
-    let client = blockmulti::Client::login(server_url, username, password, None).await?;
+    let client = blocksmulti::Client::login(server_url, username, password, None).await?;
     println!("Authentifié avec succès !");
 
     println!("\n=== 🔴 ACTUALITÉS IMPORTANTES ===");

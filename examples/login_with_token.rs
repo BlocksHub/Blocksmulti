@@ -1,4 +1,4 @@
-use blockmulti::HttpError;
+use blocksmulti::HttpError;
 
 #[tokio::main]
 async fn main() -> Result<(), HttpError> {
@@ -10,13 +10,13 @@ async fn main() -> Result<(), HttpError> {
         .expect("ESUP_MULTI_PASSWORD non défini dans l'environnement");
 
     println!("1. Authentification initiale avec identifiant et mot de passe...");
-    let initial_client = blockmulti::Client::login(server_url.clone(), username, password, None).await?;
+    let initial_client = blocksmulti::Client::login(server_url.clone(), username, password, None).await?;
     let saved_token = initial_client.auth_token();
     println!("   Token obtenu avec succès: {}", saved_token);
 
     println!("\n=== 🔑 AUTHENTIFICATION VIA TOKEN (FROM_TOKEN) ===");
     println!("2. Création d'une nouvelle session Client avec le token sauvegardé...");
-    let client = blockmulti::Client::from_token(server_url, saved_token)?;
+    let client = blocksmulti::Client::from_token(server_url, saved_token)?;
     println!("   Session Client reconstituée avec le token: {}", client.auth_token());
 
     println!("\n3. Validation des appels de l'API avec le client authentifié par token...");

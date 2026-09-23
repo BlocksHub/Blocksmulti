@@ -1,5 +1,5 @@
 [package]
-name = "blockmulti"
+name = "blocksmulti"
 description = "A perfect wrapper for Esup Multi API"
 authors = ["BlockHub"]
 readme = "README.md"
@@ -8,11 +8,11 @@ keywords = ["esup-multi", "esup", "wrapper", "school"]
 categories = ["api-bindings", "web-programming::http-client", "asynchronous"]
 version = "0.1.1"
 edition = "2024"
-repository = "https://github.com/BlocksHub/Blockmulti"
+repository = "https://github.com/BlocksHub/Blocksmulti"
 
 [lib]
 crate-type = ["lib", "cdylib", "staticlib"]
-name = "blockmulti"
+name = "blocksmulti"
 
 [[bin]]
 name = "uniffi-bindgen"

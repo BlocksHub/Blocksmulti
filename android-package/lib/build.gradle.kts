@@ -5,7 +5,7 @@ plugins {
 }
 
 android {
-    namespace = "fr.blockshub.blockmulti"
+    namespace = "fr.blockshub.blocksmulti"
     compileSdk = 34
     defaultConfig { minSdk = 24 }
 
@@ -32,14 +32,14 @@ afterEvaluate {
             create<MavenPublication>("release") {
                 from(components["release"])
                 groupId = "fr.blockshub"
-                artifactId = "blockmulti"
+                artifactId = "blocksmulti"
                 version = project.version.toString()
             }
         }
         repositories {
             maven {
                 name = "GitHubPackages"
-                url = uri("https://maven.pkg.github.com/BlocksHub/Blockmulti")
+                url = uri("https://maven.pkg.github.com/" + (System.getenv("GITHUB_REPOSITORY") ?: "BlocksHub/Blocksmulti"))
                 credentials {
                     username = System.getenv("GITHUB_ACTOR")
                     password = System.getenv("GITHUB_TOKEN")

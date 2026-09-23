@@ -26,7 +26,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [0.1.0] - 2026-09-15
 
 ### Added
-- Initial release of Blockmulti.
+- Initial release of Blocksmulti.
 - Asynchronous Rust client for the Esup Multi API.
 - Support for CAS ticket authentication, session management, schedules, cards, university news, interactive map, restaurants, notifications, and static pages.
 - UniFFI bindings and automated packaging for Android (Kotlin AAR) and iOS (Swift Package Manager / XCFramework).

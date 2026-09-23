@@ -1,4 +1,4 @@
-use blockmulti::HttpError;
+use blocksmulti::HttpError;
 
 #[tokio::main]
 async fn main() -> Result<(), HttpError> {
@@ -10,7 +10,7 @@ async fn main() -> Result<(), HttpError> {
         .expect("ESUP_MULTI_PASSWORD non défini dans l'environnement");
 
     println!("Authentification initiale sur le serveur {}...", server_url);
-    let client = blockmulti::Client::login(server_url, username.clone(), password.clone(), None).await?;
+    let client = blocksmulti::Client::login(server_url, username.clone(), password.clone(), None).await?;
     println!("Authentifié avec succès ! Token initial: {}", client.auth_token());
 
     println!("\n=== 🔄 TEST DE RECONNECTIVITÉ (RELOGIN) ===");
