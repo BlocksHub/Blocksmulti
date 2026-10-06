@@ -3,7 +3,7 @@ use blocksmulti::HttpError;
 #[tokio::main]
 async fn main() -> Result<(), HttpError> {
     let server_url = std::env::var("ESUP_MULTI_SERVER_URL")
-        .unwrap_or_else(|_| "https://appmob.uphf.fr/backend/".to_string());
+        .unwrap_or_else(|_| "https://example.com/backend/".to_string());
     let username = std::env::var("ESUP_MULTI_USERNAME")
         .expect("ESUP_MULTI_USERNAME non défini dans l'environnement");
     let password = std::env::var("ESUP_MULTI_PASSWORD")
@@ -16,9 +16,9 @@ async fn main() -> Result<(), HttpError> {
     println!("\n=== 🔑 TICKETS CAS (SSO SERVICE TICKETS) ===");
 
     let services = [
-        ("Moodle", "https://moodle.uphf.fr"),
-        ("ENT", "https://ent.uphf.fr"),
-        ("Webmail", "https://webmail.uphf.fr/login"),
+        ("Moodle", "https://moodle.example.com"),
+        ("ENT", "https://ent.example.com"),
+        ("Webmail", "https://webmail.example.com/login"),
     ];
 
     for (name, service_url) in services {
