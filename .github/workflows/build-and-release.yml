@@ -20,6 +20,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
         with:
@@ -31,7 +36,7 @@ jobs:
           key: build-android
 
       - name: Install cargo-ndk
-        uses: taiki-e/install-action@cargo-ndk
+        run: cargo install cargo-ndk
       
       - name: Setup NDK
         uses: nttld/setup-ndk@v1
@@ -88,6 +93,11 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
 
       - name: Install Rust
         uses: dtolnay/rust-toolchain@stable
@@ -165,6 +175,11 @@ jobs:
     permissions:
       contents: write
     steps:
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '24'
+
       - name: Download Android Artifact
         uses: actions/download-artifact@v4
         with:
